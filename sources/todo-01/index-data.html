@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo</title>
+    <style>
+        body {
+            font-size: 18px;
+        }
+        .completed {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" class="new-todo">
+    <ul id="todo-list">
+        <li>
+            <input type="checkbox" class="toggle">
+            Hello
+            <button type="button" class="remove">x</button>
+        </li>
+        <li class="completed">
+            <input type="checkbox" class="toggle" checked>
+            World
+            <button type="button" class="remove">x</button>
+        </li>
+    </ul>
+    <p>当前 Todo 数量：<span id="count"></span></p>
+    <p>未完成 Todo 数量：<span id="uncompleted-count"></span></p>
+    <p>已完成 Todo 数量：<span id="completed-count"></span></p>
+    <script src="jquery.min.js"></script>
+    <script src="underscore-min.js"></script>
+    <script type="text/template" id="todo-item-tpl">
+        <li data-todo="<%=todo.id %>" <% if (todo.completed) { %>class="completed"<% } %>>
+            <input type="checkbox" class="toggle" <% if (todo.completed) { %>checked<% } %>>
+            <%=todo.title %>
+            <button type="button" class="remove">x</button>
+        </li>
+    </script>
+    <script>
+        // 所有的Todo集合
+        var Todos = [{
+            id: '1',
+            title: '培训jQuery',
+            completed: true
+        }, {
+            id: '2',
+            title: '练习jQuery',
+            completed: false
+        }];
+        var todoItemTpl = _.template($('#todo-item-tpl').html());
+
+        function render() {
+            var html = '';
+            for (var i = 0; i < Todos.length; i++) {
+                html += todoItemTpl({
+                    todo: Todos[i]
+                });
+            }
+            $('#todo-list').html(html);
+
+            calcCount();
+        }
+
+        function calcCount() {
+            var count = Todos.length;
+            // 没完成的数量是通过寻找没完成的todo数组，然后.length获得的
+            var uncompletedCount = Todos.filter(function(x) {
+                return !x.completed;
+            }).length;
+            var completedCount = count - uncompletedCount;
+
+            $('#count').text(count);
+            $('#uncompleted-count').text(uncompletedCount);
+            $('#completed-count').text(completedCount);
+        }
+
+        $(window).on('load', function() {
+            render();
+
+            $('.new-todo').on('keypress', function(e) {
+                // e jQuery.Event
+                // e.keyCode
+                if (e.keyCode === 13) {
+                    var $this = $(this);
+                    var todo = $this.val();
+                    todo = todo.trim();
+                    if (todo.length === 0) {
+                        return;
+                    }
+                    // pop push / shift unshift
+                    Todos.unshift({
+                        id: _.uniqueId('todo_'),
+                        title: todo,
+                        completed: false
+                    });
+                    render();
+                    
+                    $this.val('');
+                }
+            });
+
+            $('#todo-list').on('change', '.toggle', function() {
+                var $this = $(this);
+                var checked = $this.prop('checked');
+                var $todo = $this.parents('[data-todo]');
+                var id = $todo.attr('data-todo');
+
+                var todo = Todos.find(function(x) {
+                   return x.id === id;
+                });
+                todo.completed = checked;
+
+                render();
+                // 等价
+                // for (var i = 0; i < Todos.length; i++) {
+                //     if (Todos[i].id === id) {
+                //         todo = Todos[i];
+                //         break;
+                //     }
+                // }
+            });
+
+            $('#todo-list').on('click', '.remove', function() {
+                var $this = $(this);
+                var $todo = $this.parents('[data-todo]');
+                var id = $todo.attr('data-todo');
+                Todos = Todos.filter(function(x) {
+                    return x.id !== id;
+                });
+                render();
+            });
+        });
+    </script>
+</body>
+</html>
