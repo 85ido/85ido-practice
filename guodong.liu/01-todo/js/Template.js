@@ -1,0 +1,1 @@
+<label><% doto.title %></label>
