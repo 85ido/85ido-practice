@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+        }
+        .edit {
+            display: none;
+        }
+        .editing .todo-title {
+            display: none;
+        }
+        .editing .edit {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <form id="new-todo-form">
+        <input type="text" class="new-todo">
+    </form>
+    <ul id="todo-list">
+
+    </ul>
+
+    <script id="todo-list-tpl" type="text/template">
+        <% for (var i = 0; i < todos.length; i++) { 
+            var todo = todos[i];    
+        %>
+        <li data-todo="<%=todo.id %>"
+            <% if (todo.editing) { %>
+                class="editing"
+            <% } %>
+        >
+            <input class="toggle" type="checkbox"
+                <% if (todo.completed) { %>
+                checked
+                <% } %>
+            >
+            <span class="todo-title
+                <% if (todo.completed) { %>
+                 completed
+                <% } %>
+            "><%=todo.title %></span>
+            <!--<span class="<%=todo.completed ? 'completed' : '' %>"><%=todo.title %></span>-->
+            <input type="text" class="edit" value="<%=todo.title %>">
+            <button class="remove">x</button>
+        </li>
+        <% } %>
+    </script>
+    <script src="jquery.min.js"></script>
+    <script src="underscore-min.js"></script>
+    <script>
+        var todos = [
+            {
+                id: 1,
+                title: '练习jQuery',
+                completed: false
+            }, 
+            {
+                id: 2,
+                title: 'jQuery 选择器',
+                completed: true
+            }
+        ];
+        for (var i = 0; i < 10; i++) {
+            todos.push({
+                id: _.uniqueId('todo_'),
+                title: 'Test Todo ' + i,
+                completed: i % 3 === 0
+            });
+        }
+
+        var TPL = _.template($('#todo-list-tpl').html());
+        function render() {
+            var html = TPL({
+                todos: todos
+            });
+            $('#todo-list').html(html);
+        }
+
+        $(window).on('load', function() {
+            render();
+
+            $('#new-todo-form').on('submit', function() {
+                var $todo = $('.new-todo');
+                var todo = $todo.val().trim();
+                if (todo.length === 0) {
+                    return false;
+                }
+
+                todos.unshift({
+                    id: _.uniqueId('todo_'),
+                    title: todo,
+                    completed: false
+                });
+                render();
+                $todo.val('');
+                // ajax
+                // e.preventDefault(); // 阻止默认行为
+                // e.stopPropagation();
+                return false;
+                // 等价于: preventDefault() stopPropagation()
+            });
+
+            $('#todo-list').on('dblclick', '.todo-title', function() {
+                var $this = $(this);
+                var $todo = $this.parents('[data-todo]');
+                var id = $todo.attr('data-todo');
+                var todo = null;
+                for (var i = 0; i < todos.length; i++) {
+                    todos[i].editing = false;
+                    if (id == todos[i].id) {
+                        todo = todos[i];
+                    }
+                }
+                if (todo != null) {
+                    todo.editing = true;
+                    render();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
