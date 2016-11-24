@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Modal with jQuery</title>
+		<style type="text/css">
+			.clearfix:before,
+			.clearfix:after {
+				content: " ";
+				display: table;
+			}
+			.clearfix:after {
+				clear: both;
+			}
+
+			.backdrop {
+				background-color: #666;
+				opacity: .7;
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 1000;
+			}
+
+			.modal {
+				background-color: #fff;
+				position: absolute;
+				width: 500px;
+				z-index: 1001;
+			}
+
+			.modal .modal-body {
+				border-bottom: 1px solid #ccc;
+				padding: 15px;
+			}
+			.modal .modal-footer {
+				clear: both;
+				padding: 10px;
+			}
+			.modal .modal-footer .buttons {
+				float: right;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="backdrop"></div>
+		<div class="modal">
+			<div class="modal-body">
+				<div class="modal-text">确定要删除吗？</div>
+			</div>
+			<div class="modal-footer clearfix">
+				<div class="buttons">
+					<button type="button">Cancel</button>
+					<button type="button">Yes</button>
+				</div>
+			</div>
+		</div>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/underscore-min.js"></script>
+		<script>
+			/*
+				1. 弹出方法（主要方法）的实现
+				2. 配置
+				3. 点击按钮后的回调
+			 */
+		</script>
+	</body>
+</html>

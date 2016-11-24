@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Modal with jQuery</title>
+		<style type="text/css">
+			.clearfix:before,
+			.clearfix:after {
+				content: " ";
+				display: table;
+			}
+			.clearfix:after {
+				clear: both;
+			}
+
+			.modal-backdrop {
+				background-color: #666;
+				opacity: .7;
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 1000;
+			}
+
+			.modal {
+				background-color: #fff;
+				border: 1px solid #ccc;
+				position: absolute;
+				width: 500px;
+				max-width: 98%;
+				z-index: 1001;
+			}
+
+			.modal .modal-body {
+				border-bottom: 1px solid #ccc;
+				padding: 15px;
+			}
+			.modal .modal-footer {
+				clear: both;
+				padding: 10px;
+			}
+			.modal .modal-footer .buttons {
+				float: right;
+			}
+		</style>
+	</head>
+	<body>
+		<button type="button" cmd="show-modal">弹！</button>
+
+		<script type="text/template" id="modal-tpl">
+			<% if (options.backdrop) { %><div class="modal-backdrop"></div><% } %>
+			<div class="modal" id="<%=id %>">
+				<div class="modal-body"><% if (!options.html) { %>
+					<div class="modal-text"><%-options.text %></div>
+				<% } else if (options.html) { %>
+					<div><%=options.html %></div>
+				<% } %></div>
+				<div class="modal-footer clearfix">
+					<div class="buttons"><% options.buttons.forEach(function(x) { %>
+						<button type="button" modal-flag="<%=x.flag %>"><%=x.text %></button>
+					<% }) %></div>
+				</div>
+			</div>
+		</script>
+		<script src="resources/js/jquery.min.js"></script>
+		<script src="resources/js/underscore-min.js"></script>
+		<script src="modal.js"></script>
+		<script>
+			/*
+				1. 弹出方法（主要方法）的实现
+					支持html或文字
+					自定义按钮
+					点击backdrop关闭
+					直接弹出的方法重载
+				2. 配置
+				3. 点击按钮后的回调
+			 */
+			$('[cmd]').on('click', function() {
+				showModal({
+					text: 'Hello world',
+					html: '<h1>Hello</h1>',
+					// backdrop: false
+				}, function(flag) {
+					console.log('点击了' + flag);
+				});
+			});
+		</script>
+	</body>
+</html>
