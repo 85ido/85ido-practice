@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular Todo</title>
+    <style>
+        [ng-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body ng-app="app">
+    <div id="say-hello" ng-controller="SayHelloController as sayHello" ng-cloak>
+        <span>您于{{sayHello.openTime | date: "yyyy-MM-dd HH:mm:ss"}}打开了这个页</span>
+        <h1 ng-show="sayHello.options.show">Hello {{sayHello.yourName}}</h1>
+        <input type="checkbox" ng-model="sayHello.options.show">
+        <input type="text" ng-model="sayHello.yourName">
+        <button type="button" ng-click="sayHello.sayHello()">问好</button>
+        <ul>
+            <li ng-repeat="todo in sayHello.todos">{{todo.title}}</li>
+        </ul>
+        <h3>
+            这个货的考试成绩是：
+            <span ng-style="{ color: $even ? 'blue': 'initial' }" ng-repeat="s in sayHello.scores track by $index">{{s}} </span>
+        </h3>
+    </div>
+    <script src="angular.js"></script>
+    <script>
+        /*
+        应用/模块的概念：模块的名字，模块的依赖
+        bootstrap,组件（需要引入js才能生效的部分）
+        弹出通知的组件
+        前端路由组件
+        文件上传组件
+
+        视图的改动同步到数据、数据改动同步到视图
+        控制器Controller：视图有关的逻辑、行为
+        服务Service：业务逻辑，可重用的，视图无关的
+        过滤器Filter：更改输出，0=男，1=女
+        组件Component：可复用的视图
+        指令Directive：同
+        Template：模板=html+angular
+        */
+        // 工具方法
+        angular.module('utils.85', []);
+        angular.module('animate.85', []);
+
+        // $.fn.attr(name[, value]);
+        angular.module('app', [
+            'utils.85'
+        ]).controller('SayHelloController', [
+            function() {
+                var vm = this;
+                vm.yourName = 'Mike';
+                vm.options = {
+                    show: true
+                };
+                vm.openTime = new Date();
+                vm.todos = [{
+                    id: 1,
+                    title: 'Angular',
+                    completed: false
+                }, {
+                    id: 2,
+                    title: 'jQuery',
+                    completed: true
+                }];
+                vm.scores = [100, 85, 83, 85, 90];
+
+                vm.sayHello = function() {
+                    alert('你好，' + vm.yourName);
+                };
+                console.log('constructor');
+            }
+        ]);
+    </script>
+</body>
+</html>

@@ -7,7 +7,7 @@
         backdrop: true,
         buttons: [
             {
-                text: 'Yes',
+                text: '是',
                 flag: 'yes'
             },
             {

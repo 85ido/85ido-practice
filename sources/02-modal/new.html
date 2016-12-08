@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Modal with jQuery</title>
+		<style type="text/css">
+			.clearfix:before,
+			.clearfix:after {
+				content: " ";
+				display: table;
+			}
+			.clearfix:after {
+				clear: both;
+			}
+
+			.modal-backdrop {
+				background-color: #666;
+				opacity: .7;
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 1000;
+			}
+
+			.modal {
+				background-color: #fff;
+				border: 1px solid #ccc;
+				position: absolute;
+				width: 500px;
+				max-width: 98%;
+				z-index: 1001;
+			}
+
+			.modal .modal-body {
+				border-bottom: 1px solid #ccc;
+				padding: 15px;
+			}
+			.modal .modal-footer {
+				clear: both;
+				padding: 10px;
+			}
+			.modal .modal-footer .buttons {
+				float: right;
+			}
+		</style>
+	</head>
+	<body>
+		<button type="button" cmd="show-modal">弹！</button>
+
+        <script type="text/template" id="modal-tpl">
+            <% if (options.backdrop) { %><div class="modal-backdrop"></div><% } %>
+            <div class="modal" id="<%=id %>">
+                <div class="modal-body">
+                    <div class="modal-text"><% if (options.html) { %>
+                        <%=options.html %>
+                    <% } else if (options.text) { %>
+                        <%-options.text %>
+                    <% } %></div>
+                    <div class="modal-footer clearfix">
+                        <div class="buttons">
+                            <button type="button" data-modal-flag="yes">是</button>
+                            <button type="button" data-modal-flag="no">否</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+		<script src="resources/js/jquery.min.js"></script>
+		<script src="resources/js/underscore-min.js"></script>
+		<script>
+			/*
+				1. 弹出方法（主要方法）的实现
+					支持html或文字 1
+					自定义按钮
+					点击backdrop关闭 1
+					直接弹出的方法重载
+				2. 配置
+				3. 点击按钮后的回调
+			 */
+            (function(window, $) {
+                'use strict';
+
+                /*
+                {
+                    text: '',
+                    html: '',
+                    backdrop: boolean
+                }
+                */
+                var TPL = _.template($('#modal-tpl').html());
+                var DEFAULT_OPTIONS = {
+                    text: 'Default Text',
+                    backdrop: true
+                };
+                function openModal(options, callback) {
+                    var id = _.uniqueId('modal_');
+                    var modalHtml = TPL({
+                        options: _.extend({}, DEFAULT_OPTIONS, options),
+                        id: id
+                    });
+
+                    $('body').append(modalHtml);
+
+                    var $modal = $('#' + id);
+                    $modal.on('click', '[data-modal-flag]', function() {
+                        var $this = $(this);
+                        var flag = $this.attr('data-modal-flag');
+                        $modal.remove();
+                        callback(flag);
+                    });
+                }
+                window.openModal = openModal;
+            })(window, jQuery);
+
+            $(window).on('load', function() {
+                $('[cmd="show-modal"]').on('click', function() {
+                    openModal({}, function(flag) {
+                        console.log('点击了' + flag);
+                    });
+                });
+            });
+		</script>
+	</body>
+</html>
