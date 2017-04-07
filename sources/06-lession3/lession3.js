@@ -51,6 +51,7 @@ arr.filter(function(x) { return x % 3 === 0; });
 var arr = [81, 35, 15, 49, 1, 4];
 // 循环使数组中的每一项执行函数，返回值没用，不会中途退出
 arr.forEach(function(x, index, array) {
+    console.log('x=' + x + ',index=' + index + ',array=' + array);
     console.log(`x=${x},index=${index},array=${array}`);
 });
 // 使数组中的每一项执行函数，返回值作为新数组的元素，不会中途退出
