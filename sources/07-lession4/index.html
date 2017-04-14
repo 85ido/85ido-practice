@@ -12,6 +12,15 @@
         .primary-border {
             border: 5px solid #0050ef;
         }
+        .counter {
+            color: #ffffff;
+        }
+        .red-counter {
+            background-color: #e51400;
+        }
+        .blue-counter {
+            background-color: #0050ef;
+        }
     </style>
 </head>
 <body>
@@ -26,7 +35,89 @@
     <input type="text">
     <input type="password">
     <input type="checkbox" value="30">
+
+    <div class="container"></div>
+    <ol class="list-container"></ol>
+    <ol class="list-container-2"></ol>
+    <button class="js-add-btn">Add New Group</button>
+    <div class="js-clock"></div>
+
+    <script id="count-item-tpl" type="text/template">
+        <!-- mustcache -->
+        <span class="js-btn-counter" data-counter="{{countIndex}}">0</span>
+        <br>
+        <button class="js-count-btn counter{{#if isRedCounter}} red-counter{{else}} blue-counter{{/if}}" data-index="{{countIndex}}">Click {{countDisplay}}</button>
+        <br>
+    </script>
+    <script id="list-tpl" type="text/template">
+        {{#each list}}
+        <li>Todo Content: {{title}}.</li>
+        {{else}}
+        <li class="red-counter">暂无数据</li>
+        {{/each}}
+    </script>
+    <script id="list-item-tpl" type="text/template">
+        <li>Todo Content: {{title}}.</li>
+    </script>
+
     <script src="jquery.js"></script>
+    <script src="handlebars-v4.0.5.js"></script>
     <script src="lession5.js"></script>
+    <script>
+        $(window).on('load', function() {
+            setInterval(function() {
+                var now = new Date();
+                $('.js-clock').text(now.toLocaleString());
+            }, 1000);
+
+            var TPL = Handlebars.compile($('#count-item-tpl').html());
+            var LIST_TPL = Handlebars.compile($('#list-tpl').html());
+            var LIST_ITEM_TPL = Handlebars.compile($('#list-item-tpl').html());
+
+            var list = [
+                { title: '1st todo.' },
+                { title: 'JUST DO IT.' },
+                { title: 'Last todo.' }
+            ];
+            $('.list-container').html(LIST_TPL({
+                list: list
+            }));
+            $('.list-container-2').html(
+                list.map(function(x) {
+                    return LIST_ITEM_TPL(x);
+                }).join('')
+            );
+
+            function addButtonGroup() {
+                var $container = $('.container');
+                var counterCount = $('.js-count-btn').length;
+                $container.append(TPL({
+                    countIndex: counterCount,
+                    isRedCounter: (counterCount + 1) % 5 === 0,
+                    countDisplay: counterCount + 1
+                }));
+            }
+
+            $('.container').on('click', '.js-count-btn', function() {
+                var $target = $(this);
+                var index = $target.attr('data-index');
+                var $counter = $('[data-counter="' + index + '"]');
+                var count = parseInt($counter.text());
+                if (isNaN(count)) {
+                    count = 0;
+                }
+                count += 1;
+                $counter.text(count);
+            });
+
+            $('.js-add-btn').on('click', function() {
+                addButtonGroup();
+            });
+
+            for (var i = 0; i < 3; i++) {
+                addButtonGroup();
+            }
+        });
+    </script>
 </body>
 </html>
